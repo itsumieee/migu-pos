@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Absensi | Elegan</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: #f5f7fb;
+            padding: 30px;
+        }
+        :root {
+            --bg-white: #ffffff;
+            --accent: #C6A15B;
+            --primary: #1F2A3E;
+            --text-muted: #5B6E8C;
+            --border: #E9EDF2;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--bg-white);
+            border-radius: 2rem;
+            padding: 2rem;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.05);
+        }
+        h2 { margin-bottom: 1rem; color: var(--primary); }
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        input, button {
+            padding: 10px 20px;
+            border-radius: 2rem;
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 1rem 0.5rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th { color: var(--text-muted); font-weight: 600; }
+        .badge {
+            background: #F2EFE6;
+            padding: 4px 12px;
+            border-radius: 40px;
+        }
+        .back-link {
+            margin-top: 2rem;
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+<div class="container">
+    <h2><i class="fas fa-clipboard-list"></i> Laporan Kehadiran Karyawan</h2>
+    <div class="filter-bar">
+        <input type="date" id="filterDateInput">
+        <button id="filterBtn"><i class="fas fa-filter"></i> Filter</button>
+        <button id="resetBtn">Reset</button>
+    </div>
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr><th>Nama</th><th>Tanggal</th><th>Jam Masuk</th><th>Status</th></tr>
+            </thead>
+            <tbody id="reportTableBody"></tbody>
+        </table>
+    </div>
+    <div><a href="dashboard.html" class="back-link"><i class="fas fa-arrow-left"></i> Kembali ke Dashboard</a></div>
+</div>
+<script>
+    const sessionUser = localStorage.getItem('elegant_current_session');
+    if(!sessionUser) window.location.href = 'index.html';
+    let attendances = JSON.parse(localStorage.getItem('elegant_attendances')) || [];
+
+    function renderTable(filterDate = null) {
+        let data = [...attendances];
+        if(filterDate) data = data.filter(a => a.date === filterDate);
+        data.sort((a,b) => b.date.localeCompare(a.date));
+        const tbody = document.getElementById('reportTableBody');
+        if(data.length === 0) { tbody.innerHTML = '<tr><td colspan="4">Belum ada data absensi</td></tr>'; return; }
+        tbody.innerHTML = data.map(att => `
+            <tr>
+                <td>${att.userName}</td>
+                <td>${att.date}</td>
+                <td>${att.timeIn}</td>
+                <td><span class="badge">${att.status}</span></td>
+            </tr>
+        `).join('');
+    }
+    document.getElementById('filterBtn').addEventListener('click', () => {
+        const val = document.getElementById('filterDateInput').value;
+        renderTable(val || null);
+    });
+    document.getElementById('resetBtn').addEventListener('click', () => {
+        document.getElementById('filterDateInput').value = '';
+        renderTable(null);
+    });
+    renderTable();
+</script>
+</body>
+</html>
