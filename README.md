@@ -37,7 +37,7 @@ Migu POS adalah sistem Point of Sale (POS) modern yang dibangun dengan Laravel, 
 
 ### **Base URL**: `http://localhost:8000/api`
 
-#### **1. Kategori** (`/api/categories`)
+#### **1. Kategori** (`/api/categories`) 
 ```
 GET    /api/categories           - Lihat semua kategori
 GET    /api/categories/{id}      - Lihat detail kategori
@@ -290,6 +290,105 @@ curl http://localhost:8000/api/test
 # {"message":"API jalan 🚀"}
 ```
 
+### 📖 Postman Guide Lengkap
+Lihat [POSTMAN_GUIDE.md](POSTMAN_GUIDE.md) untuk dokumentasi lengkap mencakup:
+- Setup environment di Postman
+- Search & pagination parameter
+- Upload gambar produk
+- Update produk dengan/tanpa gambar
+- Error troubleshooting
+- cURL command examples
+- Test scripts & automation
+
+---
+
+## 🔧 Test Endpoints untuk Debug
+
+Endpoint tambahan untuk testing API (debug purposes):
+
+#### **Test Simple Update** - `PUT /api/test-simple-update/{id}`
+Test update produk dengan fixed values untuk debug:
+```bash
+curl -X PUT http://localhost:8000/api/test-simple-update/1
+
+Response:
+{
+  "success": true,
+  "message": "Simple update test",
+  "data": {
+    "id": 1,
+    "name": "Product Name",
+    "price": 77777,
+    "stock": 777,
+    "updated_at": "2026-05-08T10:00:00.000000Z"
+  }
+}
+```
+
+#### **Test Debug Update** - `PUT /api/test-debug-update/{id}`
+Debug request body & headers:
+```bash
+curl -X PUT http://localhost:8000/api/test-debug-update/1 \
+  -H "Content-Type: application/json" \
+  -d '{"price": 50000}'
+
+Response:
+{
+  "debug": {
+    "content_type": "application/json",
+    "method": "PUT",
+    "all": {"price": 50000},
+    "input": {"price": 50000},
+    "json": {"price": 50000},
+    "is_json": true
+  }
+}
+```
+
+#### **Test Form-Data Update** - `PUT /api/test-form-update/{id}`
+Test update dengan form-data (untuk image upload):
+```bash
+curl -X PUT http://localhost:8000/api/test-form-update/1 \
+  -F "price=60000" \
+  -F "stock=50"
+
+Response:
+{
+  "success": true,
+  "message": "Form-data update test",
+  "request_debug": {
+    "all_data_received": {"price": "60000", "stock": "50"},
+    "price": "60000",
+    "stock": "50"
+  },
+  "data": {
+    "id": 1,
+    "name": "Product Name",
+    "price": "60000.00",
+    "stock": 50,
+    "updated_at": "2026-05-08T10:05:00.000000Z"
+  }
+}
+```
+
+#### **Test Show Product** - `GET /api/test-show/{id}`
+Lihat detail produk di database:
+```bash
+curl http://localhost:8000/api/test-show/1
+
+Response:
+{
+  "id": 1,
+  "name": "Kaos Polos Putih Premium",
+  "price": "85000.00",
+  "cost_price": "50000.00",
+  "stock": 284,
+  "image": "products/kaos_putih.jpg",
+  "created_at": "2026-04-29T10:00:00.000000Z",
+  "updated_at": "2026-04-29T10:00:00.000000Z"
+}
+```
+
 ---
 
 ## 📁 Project Structure
@@ -355,6 +454,65 @@ middleware(['auth:sanctum'])
 
 ---
 
+## � Recent Updates & Changelog
+
+### ✨ Fitur Baru & Perbaikan
+
+#### **May 8, 2026**
+
+**📚 Documentation:**
+- ✅ **POSTMAN_GUIDE.md** - Dokumentasi lengkap Postman collection
+  - Setup environment variable di Postman
+  - Contoh request untuk search, pagination, upload gambar
+  - Error troubleshooting & solusi
+  - cURL command examples
+  - Test scripts & automation dengan Postman
+  - Tutorial step-by-step upload image
+
+**🔧 Test Endpoints (Debug):**
+- ✅ `PUT /api/test-simple-update/{id}` - Test update dengan fixed values
+- ✅ `PUT /api/test-debug-update/{id}` - Debug request body & headers
+- ✅ `PUT /api/test-form-update/{id}` - Test form-data update (image upload)
+- ✅ `GET /api/test-show/{id}` - Lihat detail produk di database
+
+Endpoint ini membantu debug masalah update produk, terutama untuk fitur upload gambar.
+
+**📄 Pagination Views:**
+- ✅ Bootstrap 4 & 5 pagination template
+- ✅ Tailwind pagination template
+- ✅ Semantic UI pagination template
+- ✅ Simple pagination variants
+
+Template pagination dapat dikustomisasi sesuai kebutuhan UI frontend.
+
+---
+
+## 📚 Dokumentasi & Resources
+
+| Dokumen | Deskripsi |
+|---------|-----------|
+| [POSTMAN_GUIDE.md](POSTMAN_GUIDE.md) | Panduan lengkap testing API di Postman |
+| [README.md](README.md) | Dokumentasi project (file ini) |
+| API Endpoints | Section "🚀 API Endpoints" di atas |
+| Test Endpoints | Section "🔧 Test Endpoints untuk Debug" |
+
+---
+
+## 🎯 Checklist Features
+
+- ✅ CRUD Kategori & Produk
+- ✅ Upload & Update Gambar Produk
+- ✅ Search & Pagination Produk
+- ✅ Multi-user dengan Role (Admin/Kasir)
+- ✅ Transaksi Penjualan Real-time
+- ✅ QRIS Payment Integration
+- ✅ Laporan & Analytics
+- ✅ Scheduled Reports
+- ✅ API Documentation (Postman)
+- ✅ Debug Test Endpoints
+
+---
+
 ## 📄 License
 
 MIT License - Bebas digunakan untuk keperluan komersial maupun personal.
@@ -365,4 +523,4 @@ MIT License - Bebas digunakan untuk keperluan komersial maupun personal.
 
 Untuk pertanyaan atau issue, silakan buat di repository atau hubungi tim development.
 
-**Last Updated:** April 29, 2026
+**Last Updated:** May 8, 2026

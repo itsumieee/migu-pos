@@ -4,611 +4,777 @@
 
 @push('styles')
 <style>
-  * {
+/* ── CSS Variables: Neo-Brutalism Theme ───────────────────────────── */
+:root {
+    --c-bg:        #FFF9F0;
+    --c-surface:   #FFFFFF;
+    --c-border:    #000000;
+    --c-text:      #1A1A1A;
+    --c-text-dim:  #555555;
+    --c-accent-1:  #FF6B6B;
+    --c-accent-2:  #4ECDC4;
+    --c-accent-3:  #FFE66D;
+    --c-accent-4:  #95E1D3;
+    --c-accent-5:  #F38181;
+    --shadow-hard: 4px 4px 0px #000000;
+    --shadow-hard-lg: 6px 6px 0px #000000;
+    --shadow-hard-sm: 2px 2px 0px #000000;
+    --shadow-hover: 2px 2px 0px #000000;
+    --border-thick: 3px solid #000000;
+    --border-medium: 2px solid #000000;
+    --border-thin: 1px solid #000000;
+    --font-body: 'Space Grotesk', system-ui, sans-serif;
+    --font-display: 'Syne', sans-serif;
+    --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --c-bg: #0a0a0b;
+        --c-surface: #16191e;
+        --c-text: #ffffff;
+        --c-text-dim: #94a3b8;
+        --c-border: #ffffff;
+        --shadow-hard: 4px 4px 0px #ffffff;
+        --shadow-hard-lg: 6px 6px 0px #ffffff;
+        --shadow-hard-sm: 2px 2px 0px #ffffff;
+        --shadow-hover: 2px 2px 0px #ffffff;
+    }
+}
+
+/* ── Base Reset ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body { 
+    font-family: var(--font-body);
+    background: var(--c-bg);
+    color: var(--c-text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-  }
+}
 
-  .cart-page {
-    background: linear-gradient(160deg, #0A1628 0%, #0F2440 40%, #0D1F3C 70%, #0A1628 100%);
+/* Decorative background */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+        radial-gradient(600px circle at 15% 10%, rgba(255, 107, 107, 0.08), transparent 65%),
+        radial-gradient(400px circle at 85% 20%, rgba(255, 230, 109, 0.06), transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.nb-deco {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.04;
+}
+.nb-deco-1 { top: 8%; right: 12%; width: 100px; height: 100px; border: var(--border-thick); transform: rotate(30deg); }
+.nb-deco-2 { bottom: 12%; left: 10%; width: 70px; height: 70px; border: var(--border-thick); transform: rotate(-20deg); }
+
+/* ── Keyframes ─────────────────────────────────────────────── */
+@keyframes nbFadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes nbWobble {
+    0%, 100% { transform: rotate(-1deg); }
+    50% { transform: rotate(2deg); }
+}
+
+.animate-fade-in { animation: nbFadeUp 0.5s var(--ease-bounce) both; }
+.animate-wobble { animation: nbWobble 3s ease-in-out infinite; }
+
+/* ── Page Layout ───────────────────────────────────────── */
+.cart-page {
+    padding: 2rem 1.5rem;
     min-height: 100vh;
-    color: #e8e8e8;
-    padding: 2.5rem 1.5rem;
-    font-family: 'Poppins', -apple-system, system-ui, sans-serif;
-  }
+    position: relative;
+    z-index: 1;
+}
 
-  .cart-header {
+.cart-header {
     max-width: 1200px;
-    margin: 0 auto 2.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
+    margin: 0 auto 2rem;
+    text-align: center;
+}
 
-  .cart-title {
-    font-size: clamp(24px, 5vw, 32px);
-    font-weight: 700;
-    color: #fff;
+.cart-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+    font-weight: 900;
+    color: var(--c-text);
     margin-bottom: 0.5rem;
-    letter-spacing: -0.5px;
-  }
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+}
 
-  .cart-subtitle {
-    font-size: 14px;
-    color: rgba(255,255,255,0.4);
-    font-weight: 500;
-  }
+.cart-subtitle {
+    font-size: 0.9rem;
+    color: var(--c-text-dim);
+    font-weight: 600;
+}
 
-  .cart-wrapper {
+.cart-wrapper {
     max-width: 1200px;
     margin: 0 auto;
-  }
+}
 
-  .cart-container {
+/* ── Cart Container Grid ───────────────────────────────── */
+.cart-container {
     display: grid;
-    grid-template-columns: 1fr 380px;
+    grid-template-columns: 1fr 360px;
     gap: 2rem;
     align-items: start;
-  }
+}
 
-  .cart-items {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .cart-item {
-    background: rgba(255,255,255,0.04);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 14px;
-    padding: 1.5rem;
+/* ── Cart Item Card ────────────────────────────────────── */
+.nb-cart-item {
+    background: var(--c-surface);
+    border: var(--border-thick);
+    border-radius: 0;
+    padding: 1.25rem;
     display: grid;
-    grid-template-columns: 110px 1fr auto;
-    gap: 1.5rem;
+    grid-template-columns: 100px 1fr auto;
+    gap: 1.25rem;
     align-items: center;
-    transition: all 0.2s ease;
-  }
+    transition: all 0.15s var(--ease-bounce);
+    box-shadow: var(--shadow-hard);
+    position: relative;
+}
 
-  .cart-item:hover {
-    border-color: rgba(0,212,255,0.3);
-    background: rgba(255,255,255,0.06);
-    box-shadow: inset 0 0 20px rgba(0, 212, 255, 0.08);
-  }
+.nb-cart-item::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    width: 20px;
+    height: 20px;
+    background: var(--c-accent-3);
+    border: var(--border-thick);
+    z-index: 2;
+}
 
-  .item-img {
-    width: 110px;
-    height: 110px;
-    background: linear-gradient(135deg, rgba(15,36,64,0.8) 0%, rgba(13,31,60,0.8) 100%);
-    border-radius: 10px;
+.nb-cart-item:hover {
+    transform: translate(2px, 2px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--c-accent-1);
+}
+
+/* Item Image */
+.nb-cart-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 0;
     overflow: hidden;
+    border: var(--border-thick);
     flex-shrink: 0;
-    border: 1px solid rgba(255,255,255,0.06);
-  }
-
-  .item-img img {
+    background: var(--c-surface);
+    box-shadow: var(--shadow-hard-sm);
+}
+.nb-cart-img img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    display: block;
-  }
+}
 
-  .item-details {
+/* Item Details */
+.nb-cart-details {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .item-name {
-    font-size: 15px;
-    font-weight: 600;
-    color: #fff;
-    line-height: 1.4;
-  }
-
-  .item-price {
-    font-size: 13px;
-    color: rgba(255,255,255,0.5);
+    gap: 0.5rem;
+}
+.nb-cart-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--c-text);
+    line-height: 1.3;
+}
+.nb-cart-price {
+    font-size: 0.85rem;
+    color: var(--c-text-dim);
     font-weight: 500;
-  }
+}
 
-  .qty-ctrl {
+/* Quantity Controls */
+.nb-qty-ctrl {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 8px;
-    padding: 4px 8px;
-    width: fit-content;
-    margin-top: 0.25rem;
-  }
-
-  .qty-btn {
-    width: 28px;
-    height: 28px;
-    border: 1px solid transparent;
-    background: transparent;
-    color: rgba(255,255,255,0.4);
+    gap: 0.25rem;
+    border: var(--border-thick);
+    border-radius: 0;
+    background: var(--c-surface);
+    padding: 2px;
+}
+.nb-qty-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: var(--c-surface);
+    color: var(--c-text);
+    font-size: 1.2rem;
+    font-weight: 700;
     cursor: pointer;
+    transition: all 0.15s var(--ease-bounce);
+    border-radius: 0;
+}
+.nb-qty-btn:hover {
+    background: var(--c-accent-3);
+    transform: translate(1px, 1px);
+}
+.nb-qty-val {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--c-text);
+    min-width: 28px;
+    text-align: center;
+}
+
+/* Remove Button */
+.nb-remove-btn {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--c-accent-1);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.15s var(--ease-bounce);
+}
+.nb-remove-btn:hover {
+    background: var(--c-accent-1);
+    color: #fff;
+    transform: translate(1px, 1px);
+}
+
+/* Item Total */
+.nb-cart-total {
+    text-align: right;
+    flex-shrink: 0;
+}
+.nb-cart-total-val {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--c-accent-1);
+}
+
+/* ── Empty Cart State ──────────────────────────────────── */
+.nb-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--c-surface);
+    border: var(--border-thick);
+    border-radius: 0;
+    box-shadow: var(--shadow-hard);
+}
+.nb-empty-icon {
+    width: 4rem;
+    height: 4rem;
+    margin: 0 auto 1.5rem;
+    border: var(--border-thick);
+    border-radius: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
-    font-weight: 600;
-    transition: all 0.15s ease;
-    border-radius: 6px;
-  }
-
-  .qty-btn:hover {
-    color: #00D4FF;
-    background: rgba(0,212,255,0.1);
-  }
-
-  .qty-btn:active {
-    transform: scale(0.95);
-  }
-
-  .qty-val {
-    font-size: 14px;
-    font-weight: 700;
-    color: #e8e8e8;
-    min-width: 28px;
-    text-align: center;
-  }
-
-  .item-total {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.75rem;
-  }
-
-  .item-subtotal {
-    font-size: 18px;
-    font-weight: 700;
-    color: #00D4FF;
-  }
-
-  .item-remove {
-    font-size: 12px;
-    color: rgba(255,255,255,0.4);
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    padding: 4px 8px;
-    border-radius: 6px;
-  }
-
-  .item-remove:hover {
-    color: #ff7b6b;
-    background: rgba(255, 123, 107, 0.1);
-  }
-
-  .empty-cart {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 5rem 2rem;
-    background: rgba(255,255,255,0.04);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 14px;
-  }
-
-  .empty-icon {
-    width: 56px;
-    height: 56px;
-    margin: 0 auto 1.5rem;
-    color: rgba(255,255,255,0.1);
-    stroke-width: 1;
-  }
-
-  .empty-title {
-    font-size: 22px;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 0.75rem;
-  }
-
-  .empty-desc {
-    font-size: 14px;
-    color: rgba(255,255,255,0.4);
-    margin-bottom: 2rem;
-  }
-
-  .btn-continue {
+    color: var(--c-text-dim);
+    opacity: 0.4;
+}
+.nb-empty-title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--c-text);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+}
+.nb-empty-desc {
+    color: var(--c-text-dim);
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+.nb-empty-btn {
     display: inline-block;
-    background: #00D4FF;
-    color: #0A1628;
-    padding: 12px 32px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 700;
+    padding: 0.75rem 2rem;
+    border-radius: 0;
+    border: var(--border-thick);
+    background: var(--c-accent-1);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
     text-decoration: none;
-    transition: all 0.2s ease;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 212, 255, 0.25);
-  }
+    transition: all 0.15s var(--ease-bounce);
+    box-shadow: var(--shadow-hard-sm);
+}
+.nb-empty-btn:hover {
+    background: var(--c-accent-3);
+    color: #000;
+    transform: translate(2px, 2px);
+    box-shadow: var(--shadow-hover);
+}
 
-  .btn-continue:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 212, 255, 0.35);
-  }
-
-  .summary-box {
-    background: rgba(255,255,255,0.04);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 14px;
-    padding: 1.75rem;
+/* ── Summary Box ───────────────────────────────────────── */
+.nb-summary {
+    background: var(--c-surface);
+    border: var(--border-thick);
+    border-radius: 0;
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
-    height: fit-content;
     position: sticky;
     top: 2rem;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-  }
-
-  .summary-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: #fff;
+    box-shadow: var(--shadow-hard);
+}
+.nb-summary::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    width: 20px;
+    height: 20px;
+    background: var(--c-accent-3);
+    border: var(--border-thick);
+    z-index: 2;
+}
+.nb-summary-title {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--c-text);
     padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
+    border-bottom: var(--border-thin);
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+}
 
-  .summary-row {
+/* Summary Rows */
+.nb-summary-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 14px;
-    padding: 0.75rem 0;
-  }
-
-  .summary-row.total {
+    font-size: 0.9rem;
+    color: var(--c-text-dim);
+    font-weight: 500;
+}
+.nb-summary-row.total {
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 1px solid rgba(255,255,255,0.06);
-    font-size: 16px;
-  }
-
-  .summary-label {
-    color: rgba(255,255,255,0.5);
-    font-weight: 500;
-  }
-
-  .summary-value {
-    color: #e8e8e8;
-    font-weight: 600;
-  }
-
-  .summary-total {
-    font-size: 24px;
+    border-top: var(--border-thin);
+    font-size: 1.1rem;
+    color: var(--c-text);
     font-weight: 700;
-    color: #00D4FF;
-  }
-
-  .btn-checkout {
-    background: #00D4FF;
-    color: #0A1628;
-    border: none;
-    border-radius: 10px;
-    padding: 14px;
-    font-size: 15px;
+}
+.nb-summary-total {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--c-accent-1);
+}
+.nb-summary-free {
+    color: var(--c-accent-2);
     font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+}
+
+/* Checkout Button */
+.nb-checkout-btn {
     width: 100%;
+    padding: 1rem;
+    border-radius: 0;
+    border: var(--border-thick);
+    background: var(--c-accent-1);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .btn-checkout:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 212, 255, 0.4);
-    background: #00E5FF;
-  }
-
-  .btn-checkout:active {
-    transform: translateY(0);
-  }
-
-  .btn-checkout:disabled {
-    background: rgba(255,255,255,0.1);
-    color: rgba(255,255,255,0.3);
-    cursor: not-allowed;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.15s var(--ease-bounce);
+    box-shadow: var(--shadow-hard-sm);
+}
+.nb-checkout-btn:hover {
+    background: var(--c-accent-3);
+    color: #000;
+    transform: translate(2px, 2px);
+    box-shadow: var(--shadow-hover);
+}
+.nb-checkout-btn:active {
+    transform: translate(4px, 4px);
     box-shadow: none;
-  }
+}
+.nb-checkout-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
 
-  .btn-continue-cart {
+/* Continue Shopping Link */
+.nb-continue-link {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    margin-top: 0.75rem;
-    padding: 12px;
-    border: 2px solid rgba(255,255,255,0.2);
-    border-radius: 10px;
-    text-decoration: none;
-    font-size: 14px;
-    color: rgba(255,255,255,0.6);
-    transition: all 0.2s ease;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border-radius: 0;
+    border: var(--border-thin);
     background: transparent;
-  }
+    color: var(--c-text);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.15s var(--ease-bounce);
+}
+.nb-continue-link:hover {
+    background: var(--c-accent-3);
+    border-color: var(--c-border);
+    transform: translate(1px, 1px);
+}
 
-  .btn-continue-cart:hover {
-    border-color: #00D4FF;
-    color: #00D4FF;
-    background: rgba(0,212,255,0.05);
-  }
+/* ── Payment Modal ─────────────────────────────────────── */
+.nb-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    backdrop-filter: blur(4px);
+}
+.nb-modal.active {
+    display: flex;
+}
+.nb-modal-content {
+    background: var(--c-surface);
+    border: var(--border-thick);
+    border-radius: 0;
+    padding: 2rem;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: var(--shadow-hard-lg);
+    position: relative;
+}
+.nb-modal-content::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    width: 24px;
+    height: 24px;
+    background: var(--c-accent-3);
+    border: var(--border-thick);
+    z-index: 2;
+}
+.nb-modal-title {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--c-text);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+}
 
-  @media (max-width: 1024px) {
+/* Payment Options */
+.nb-payment-options {
+    display: grid;
+    gap: 0.75rem;
+}
+.nb-payment-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    border: var(--border-thick);
+    border-radius: 0;
+    background: var(--c-surface);
+    cursor: pointer;
+    transition: all 0.15s var(--ease-bounce);
+    font-weight: 600;
+    color: var(--c-text);
+}
+.nb-payment-option:hover {
+    background: var(--c-accent-3);
+    transform: translate(2px, 2px);
+    box-shadow: var(--shadow-hover);
+}
+.nb-payment-option .icon {
+    font-size: 1.5rem;
+}
+
+/* Modal Cancel Button */
+.nb-modal-cancel {
+    width: 100%;
+    padding: 0.75rem;
+    margin-top: 1.25rem;
+    border-radius: 0;
+    border: var(--border-thick);
+    background: transparent;
+    color: var(--c-text);
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s var(--ease-bounce);
+}
+.nb-modal-cancel:hover {
+    background: var(--c-accent-1);
+    color: #fff;
+    transform: translate(2px, 2px);
+}
+
+/* ── Typography ───────────────────────────────────────── */
+h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+}
+p, span, label { font-weight: 500; }
+strong, b { font-weight: 800; }
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 1024px) {
     .cart-container {
-      grid-template-columns: 1fr;
+        grid-template-columns: 1fr;
     }
+    .nb-summary {
+        position: static;
+    }
+}
 
-    .summary-box {
-      position: static;
+@media (max-width: 768px) {
+    .cart-page { padding: 1.5rem 1rem; }
+    .nb-cart-item {
+        grid-template-columns: 80px 1fr;
+        gap: 1rem;
+        padding: 1rem;
     }
-  }
+    .nb-cart-total {
+        grid-column: 2;
+        grid-row: 2;
+        margin-top: 0.5rem;
+        text-align: left;
+    }
+    .nb-cart-img {
+        width: 80px;
+        height: 80px;
+    }
+}
 
-  @media (max-width: 768px) {
-    .cart-page {
-      padding: 1.5rem 1rem;
+@media (max-width: 480px) {
+    .cart-page { padding: 1rem 0.75rem; }
+    .nb-cart-item {
+        grid-template-columns: 70px 1fr;
+        gap: 0.75rem;
+        padding: 0.875rem;
     }
+    .nb-cart-img {
+        width: 70px;
+        height: 70px;
+    }
+    .nb-cart-name { font-size: 0.9rem; }
+    .nb-cart-total-val { font-size: 1rem; }
+}
 
-    .cart-container {
-      gap: 1.5rem;
-    }
+/* ── Focus States ─────────────────────────────────────── */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+    outline: 3px solid var(--c-accent-1);
+    outline-offset: 2px;
+}
 
-    .cart-item {
-      grid-template-columns: 90px 1fr;
-      gap: 1rem;
-      padding: 1rem;
+/* ── Reduced Motion ───────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
-
-    .cart-item:hover {
-      border-color: rgba(0,212,255,0.2);
-    }
-
-    .item-total {
-      grid-column: 2;
-      grid-row: 2;
-      margin-top: 0.5rem;
-    }
-
-    .item-img {
-      width: 90px;
-      height: 90px;
-    }
-
-    .cart-title {
-      font-size: 24px;
-    }
-
-    .summary-box {
-      padding: 1.5rem;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .cart-page {
-      padding: 1rem 0.75rem;
-    }
-
-    .cart-item {
-      grid-template-columns: 80px 1fr;
-      gap: 0.75rem;
-      padding: 0.875rem;
-    }
-
-    .item-img {
-      width: 80px;
-      height: 80px;
-    }
-
-    .item-name {
-      font-size: 14px;
-    }
-
-    .item-price {
-      font-size: 12px;
-    }
-
-    .item-subtotal {
-      font-size: 16px;
-    }
-
-    .cart-title {
-      font-size: 20px;
-    }
-
-    .summary-box {
-      padding: 1.25rem;
-    }
-
-    .summary-title {
-      font-size: 15px;
-    }
-
-    .btn-checkout {
-      padding: 12px;
-      font-size: 14px;
-    }
-  }
+}
 </style>
 @endpush
 
 @section('content')
+<!-- Decorative Background Elements -->
+<div class="nb-deco nb-deco-1"></div>
+<div class="nb-deco nb-deco-2"></div>
+
 <div class="cart-page">
-  <div class="cart-header">
-    <h1 class="cart-title">Keranjang Belanja</h1>
-    <p class="cart-subtitle">{{ session('cart') ? count(session('cart')) : 0 }} produk</p>
-  </div>
-
-  <div class="cart-wrapper">
-    @if(session('cart') && count(session('cart')) > 0)
-    <form action="{{ route('checkout.process') }}" method="POST" id="checkoutForm">
-      @csrf
-      <div class="cart-container">
-        
-        <!-- LEFT: Items List -->
-        <div class="cart-items">
-          @foreach(session('cart') as $id => $item)
-          <div class="cart-item">
-            <!-- Image -->
-            <div class="item-img">
-              <img src="{{ $item['image'] ?? 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23333%22 stroke-width=%221%22%3E%3Crect x=%223%22 y=%223%22 width=%2218%22 height=%2218%22 rx=%222%22/%3E%3Ccircle cx=%228.5%22 cy=%228.5%22 r=%221.5%22/%3E%3Cpolyline points=%2221 15 16 10 5 21%22/%3E%3C/svg%3E' }}" alt="{{ $item['name'] }}" loading="lazy">
-            </div>
-            
-            <!-- Details & Quantity -->
-            <div class="item-details">
-              <div class="item-name">{{ $item['name'] }}</div>
-              <div class="item-price">Rp {{ number_format($item['price'], 0, ',', '.') }}</div>
-              <div class="qty-ctrl">
-                <button type="button" class="qty-btn" onclick="updateQty({{ $id }}, -1)" title="Kurangi">−</button>
-                <span class="qty-val">{{ $item['qty'] }}</span>
-                <button type="button" class="qty-btn" onclick="updateQty({{ $id }}, 1)" title="Tambah">+</button>
-              </div>
-            </div>
-            
-            <!-- Total & Remove -->
-            <div class="item-total">
-              <div class="item-subtotal">Rp {{ number_format($item['price'] * $item['qty'], 0, ',', '.') }}</div>
-              <button type="button" class="item-remove" onclick="removeItem({{ $id }})" title="Hapus">Hapus</button>
-            </div>
-          </div>
-          @endforeach
-        </div>
-        
-        <!-- RIGHT: Summary Box -->
-        <div class="summary-box">
-          <div class="summary-title">Ringkasan Pesanan</div>
-          
-          @php
-            $subtotal = collect(session('cart'))->sum(fn($i) => $i['price'] * $i['qty']);
-          @endphp
-          
-          <div class="summary-row">
-            <span class="summary-label">Subtotal</span>
-            <span class="summary-value">Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
-          </div>
-          <div class="summary-row">
-            <span class="summary-label">Ongkos Kirim</span>
-            <span class="summary-value">Gratis</span>
-          </div>
-          <div class="summary-row total">
-            <span class="summary-label">Total</span>
-            <span class="summary-total">Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
-          </div>
-          
-          <button type="button" class="btn-checkout" onclick="showPaymentModal()">Lanjut ke Checkout</button>
-          <a href="{{ route('home') }}" class="btn-continue-cart">← Lanjut Belanja</a>
-        </div>
-      </div>
-    </form>
-
-    <!-- Payment Method Modal -->
-    <div id="paymentModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
-      <div style="background: #0F2440; border-radius: 20px; padding: 2rem; max-width: 500px; width: 100%; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
-        <h2 style="font-size: 1.5rem; font-weight: 700; color: #00D4FF; margin-bottom: 2rem; text-align: center;">Pilih Metode Pembayaran</h2>
-        
-        <div style="display: grid; gap: 1rem;">
-          <button type="button" onclick="selectPayment('cash')" style="padding: 1.25rem; background: rgba(255,255,255,0.04); border: 2px solid rgba(255,255,255,0.1); border-radius: 12px; color: #e8e8e8; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 1rem;">
-            <span style="font-size: 1.5rem;">💵</span>
-            <span>Tunai (Bayar Langsung)</span>
-          </button>
-          
-          <button type="button" onclick="selectPayment('debit')" style="padding: 1.25rem; background: rgba(255,255,255,0.04); border: 2px solid rgba(255,255,255,0.1); border-radius: 12px; color: #e8e8e8; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 1rem;">
-            <span style="font-size: 1.5rem;">🏦</span>
-            <span>Kartu Debit</span>
-          </button>
-          
-          <button type="button" onclick="selectPayment('qris')" style="padding: 1.25rem; background: rgba(255,255,255,0.04); border: 2px solid rgba(255,255,255,0.1); border-radius: 12px; color: #e8e8e8; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 1rem;">
-            <span style="font-size: 1.5rem;">📲</span>
-            <span>QRIS</span>
-          </button>
-          
-          <button type="button" onclick="selectPayment('ewallet')" style="padding: 1.25rem; background: rgba(255,255,255,0.04); border: 2px solid rgba(255,255,255,0.1); border-radius: 12px; color: #e8e8e8; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 1rem;">
-            <span style="font-size: 1.5rem;">💳</span>
-            <span>E-Wallet</span>
-          </button>
-        </div>
-
-        <button type="button" onclick="closePaymentModal()" style="width: 100%; padding: 0.75rem; margin-top: 1.5rem; background: transparent; border: 2px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.6); border-radius: 10px; font-size: 0.9rem; font-weight: 600; cursor: pointer;">
-          Batal
-        </button>
-      </div>
+    <div class="cart-header animate-fade-in">
+        <h1 class="cart-title">Keranjang Belanja</h1>
+        <p class="cart-subtitle">{{ session('cart') ? count(session('cart')) : 0 }} produk</p>
     </div>
 
-    <style>
-      #paymentModal button:hover {
-        border-color: #00D4FF !important;
-        background: rgba(0, 212, 255, 0.1) !important;
-        color: #00D4FF !important;
-        transform: translateY(-2px);
-      }
-    </style>
+    <div class="cart-wrapper">
+        @if(session('cart') && count(session('cart')) > 0)
+        <form action="{{ route('checkout.process') }}" method="POST" id="checkoutForm">
+            @csrf
+            <div class="cart-container">
+                
+                <!-- LEFT: Items List -->
+                <div class="cart-items">
+                    @foreach(session('cart') as $id => $item)
+                    <div class="nb-cart-item animate-fade-in">
+                        <!-- Image -->
+                        <div class="nb-cart-img">
+                            <img src="{{ $item['image'] ?? 'https://via.placeholder.com/100x100?text=Product' }}" alt="{{ $item['name'] }}" loading="lazy">
+                        </div>
+                        
+                        <!-- Details & Quantity -->
+                        <div class="nb-cart-details">
+                            <div class="nb-cart-name">{{ $item['name'] }}</div>
+                            <div class="nb-cart-price">Rp {{ number_format($item['price'], 0, ',', '.') }}</div>
+                            <div class="nb-qty-ctrl">
+                                <button type="button" class="nb-qty-btn" onclick="updateQty({{ $id }}, -1)" title="Kurangi">−</button>
+                                <span class="nb-qty-val">{{ $item['qty'] }}</span>
+                                <button type="button" class="nb-qty-btn" onclick="updateQty({{ $id }}, 1)" title="Tambah">+</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Total & Remove -->
+                        <div class="nb-cart-total">
+                            <div class="nb-cart-total-val">Rp {{ number_format($item['price'] * $item['qty'], 0, ',', '.') }}</div>
+                            <button type="button" class="nb-remove-btn" onclick="removeItem({{ $id }})" title="Hapus">Hapus</button>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+                
+                <!-- RIGHT: Summary Box -->
+                <div class="nb-summary animate-fade-in" style="animation-delay: 0.1s">
+                    <div class="nb-summary-title">Ringkasan Pesanan</div>
+                    
+                    @php
+                        $subtotal = collect(session('cart'))->sum(fn($i) => $i['price'] * $i['qty']);
+                    @endphp
+                    
+                    <div class="nb-summary-row">
+                        <span class="summary-label">Subtotal</span>
+                        <span class="summary-value">Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="nb-summary-row">
+                        <span class="summary-label">Ongkos Kirim</span>
+                        <span class="nb-summary-free">Gratis</span>
+                    </div>
+                    <div class="nb-summary-row total">
+                        <span class="summary-label">Total</span>
+                        <span class="nb-summary-total">Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
+                    </div>
+                    
+                    <button type="button" class="nb-checkout-btn" onclick="showPaymentModal()">Lanjut ke Checkout</button>
+                    <a href="{{ route('home') }}" class="nb-continue-link">← Lanjut Belanja</a>
+                </div>
+            </div>
+        </form>
 
-    <script>
-      function showPaymentModal() {
-        const modal = document.getElementById('paymentModal');
-        modal.style.display = 'flex';
-      }
+        <!-- Payment Method Modal -->
+        <div id="paymentModal" class="nb-modal">
+            <div class="nb-modal-content animate-fade-in">
+                <h2 class="nb-modal-title">Pilih Metode Pembayaran</h2>
+                
+                <div class="nb-payment-options">
+                    <button type="button" onclick="selectPayment('cash')" class="nb-payment-option">
+                        <span class="icon">💵</span>
+                        <span>Tunai (Bayar Langsung)</span>
+                    </button>
+                    
+                    <button type="button" onclick="selectPayment('debit')" class="nb-payment-option">
+                        <span class="icon">🏦</span>
+                        <span>Kartu Debit</span>
+                    </button>
+                    
+                    <button type="button" onclick="selectPayment('qris')" class="nb-payment-option">
+                        <span class="icon">📲</span>
+                        <span>QRIS</span>
+                    </button>
+                    
+                    <button type="button" onclick="selectPayment('ewallet')" class="nb-payment-option">
+                        <span class="icon">💳</span>
+                        <span>E-Wallet</span>
+                    </button>
+                </div>
 
-      function closePaymentModal() {
-        const modal = document.getElementById('paymentModal');
-        modal.style.display = 'none';
-      }
+                <button type="button" onclick="closePaymentModal()" class="nb-modal-cancel">
+                    Batal
+                </button>
+            </div>
+        </div>
 
-      function selectPayment(method) {
-        const form = document.getElementById('checkoutForm');
-        if (!form) {
-          alert('Form tidak ditemukan!');
-          return;
+        <script>
+        function showPaymentModal() {
+            const modal = document.getElementById('paymentModal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
-        
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'payment_method';
-        input.value = method;
-        form.appendChild(input);
-        
-        closePaymentModal();
-        setTimeout(() => form.submit(), 100);
-      }
 
-      // Close modal when clicking outside
-      const modal = document.getElementById('paymentModal');
-      if (modal) {
-        modal.addEventListener('click', function(e) {
-          if (e.target === this) closePaymentModal();
+        function closePaymentModal() {
+            const modal = document.getElementById('paymentModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function selectPayment(method) {
+            const form = document.getElementById('checkoutForm');
+            if (!form) {
+                alert('Form tidak ditemukan!');
+                return;
+            }
+            
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'payment_method';
+            input.value = method;
+            form.appendChild(input);
+            
+            closePaymentModal();
+            setTimeout(() => form.submit(), 100);
+        }
+
+        // Close modal when clicking outside
+        const modal = document.getElementById('paymentModal');
+        if (modal) {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) closePaymentModal();
+            });
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closePaymentModal();
         });
-      }
-
-      // Close modal on Escape key
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') closePaymentModal();
-      });
-    </script>
-    @else
-    <!-- Empty State -->
-    <div class="cart-container">
-      <div class="empty-cart">
-        <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-        </svg>
-        <div class="empty-title">Keranjang Kosong</div>
-        <p class="empty-desc">Belum ada produk yang ditambahkan ke keranjang</p>
-        <a href="{{ route('home') }}" class="btn-continue">Mulai Belanja</a>
-      </div>
+        </script>
+        @else
+        <!-- Empty State -->
+        <div class="cart-container">
+            <div class="nb-empty animate-fade-in">
+                <div class="nb-empty-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                    </svg>
+                </div>
+                <h2 class="nb-empty-title">Keranjang Kosong</h2>
+                <p class="nb-empty-desc">Belum ada produk yang ditambahkan ke keranjang</p>
+                <a href="{{ route('home') }}" class="nb-empty-btn">Mulai Belanja</a>
+            </div>
+        </div>
+        @endif
     </div>
-    @endif
-  </div>
 </div>
 @endsection
 

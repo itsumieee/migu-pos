@@ -16,6 +16,130 @@ Route::get('/test', function () {
     ]);
 });
 
+// Test endpoint untuk debug update dengan JSON
+Route::put('/test-simple-update/{id}', function ($id) {
+    $product = \App\Models\Product::find($id);
+    if (!$product) {
+        return response()->json(['error' => 'Product not found']);
+    }
+    
+    // Update dengan value yang fix
+    $product->update([
+        'price' => 77777,
+        'stock' => 777
+    ]);
+    
+    // Reload
+    $product->refresh();
+    
+    return response()->json([
+        'success' => true,
+        'message' => 'Simple update test',
+        'data' => [
+            'id' => $product->id,
+            'name' => $product->name,
+            'price' => $product->price,
+            'stock' => $product->stock,
+            'updated_at' => $product->updated_at
+        ]
+    ]);
+});
+
+// Test endpoint untuk debug request body
+Route::put('/test-debug-update/{id}', function ($id) {
+    $product = \App\Models\Product::find($id);
+    if (!$product) {
+        return response()->json(['error' => 'Product not found']);
+    }
+    
+    $req = request();
+    
+    return response()->json([
+        'debug' => [
+            'content_type' => $req->header('Content-Type'),
+            'method' => $req->method(),
+            'all' => $req->all(),
+            'input' => $req->input(),
+            'json' => $req->json()->all() ?? [],
+            'is_json' => $req->isJson(),
+            'raw_content' => substr($req->getContent(), 0, 500)
+        ]
+    ]);
+});
+
+// Test endpoint untuk form-data update
+Route::put('/test-form-update/{id}', function ($id) {
+    $product = \App\Models\Product::find($id);
+    if (!$product) {
+        return response()->json(['error' => 'Product not found']);
+    }
+    
+    $req = request();
+    
+    // Debug detail
+    $allData = $req->all();
+    $price = $req->input('price');
+    $stock = $req->input('stock');
+    
+    \Log::info('=== FORM UPDATE DEBUG ===', [
+        'content_type' => $req->header('Content-Type'),
+        'method' => $req->method(),
+        'all_request' => $allData,
+        'price_from_input' => $price,
+        'stock_from_input' => $stock,
+        'has_price' => isset($allData['price']),
+        'has_stock' => isset($allData['stock']),
+    ]);
+    
+    // Jika ada data, update
+    if (!empty($allData)) {
+        $update = [];
+        if (isset($allData['price'])) $update['price'] = $allData['price'];
+        if (isset($allData['stock'])) $update['stock'] = $allData['stock'];
+        
+        if (!empty($update)) {
+            $product->update($update);
+            $product->refresh();
+        }
+    }
+    
+    return response()->json([
+        'success' => true,
+        'message' => 'Form-data update test',
+        'request_debug' => [
+            'all_data_received' => $allData,
+            'price' => $price,
+            'stock' => $stock
+        ],
+        'data' => [
+            'id' => $product->id,
+            'name' => $product->name,
+            'price' => $product->price,
+            'stock' => $product->stock,
+            'updated_at' => $product->updated_at
+        ]
+    ]);
+});
+
+// Test endpoint untuk lihat product di database
+Route::get('/test-show/{id}', function ($id) {
+    $product = \App\Models\Product::find($id);
+    if (!$product) {
+        return response()->json(['error' => 'Product not found']);
+    }
+    
+    return response()->json([
+        'id' => $product->id,
+        'name' => $product->name,
+        'price' => $product->price,
+        'cost_price' => $product->cost_price,
+        'stock' => $product->stock,
+        'image' => $product->image,
+        'created_at' => $product->created_at,
+        'updated_at' => $product->updated_at
+    ]);
+});
+
 // API Kategori
 Route::apiResource('categories', CategoryApiController::class)->names([
     'index' => 'api.categories.index',
